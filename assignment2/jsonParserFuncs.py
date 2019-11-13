@@ -16,6 +16,7 @@ def get_coordinates(path, full_coordinats = False):
         line = f.readline()
         print(line)
         timeStep = "1"
+        ids = list()
         ts = list()
         xs = list()
         ys = list()
@@ -23,7 +24,7 @@ def get_coordinates(path, full_coordinats = False):
             while line and timeStep == "1":
                 line = f.readline()
                 if line:
-                    timeStep, x, y = line.split(" ")[0], line.split(" ")[2], line.split(" ")[3]
+                    timeStep, x, y, pedid = line.split(" ")[0], line.split(" ")[2], line.split(" ")[3], line.split(" ")[1]
                     if timeStep == "1":
                         xs.append(x)
                         ys.append(y)
@@ -33,16 +34,17 @@ def get_coordinates(path, full_coordinats = False):
             while line:
                 line = f.readline()
                 if line:
-                    timeStep, x, y = line.split(" ")[0], line.split(" ")[2], line.split(" ")[3]
+                    timeStep, x, y, pedid = line.split(" ")[0], line.split(" ")[2], line.split(" ")[3], line.split(" ")[1]
                     xs.append(x)
                     ys.append(y)
                     ts.append(timeStep)
+                    ids.append(pedid)
 
             f.close()
         if not full_coordinats:
             return xs, ys
         else:
-            return xs, ys, ts
+            return xs, ys, ts, ids
 
 
 def add_pedestrian(scenario_json,
