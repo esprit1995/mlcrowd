@@ -10,7 +10,7 @@ def get_coordinates(path):
     """
 
     print('******Getting trajectories from ' + str(path))
-    with open(Path(path), "r") as f:
+    with open(str(Path(path)), "r") as f:
         line = f.readline()
         print(line)
         timeStep = "1"
@@ -116,6 +116,7 @@ def replace_source_with_pedestrians(scenarioname,
                                     pathscenario='scenarios',
                                     pathtraj='trajectories',
                                     newname="task5Updated.scenario",
+                                    outputdir="outputs",
                                     targets=[1]):
     """
     For scenario located at 'pathfilename', delete sources and insert pedestrians in the coordinates recorded in pathfilenametrakj
@@ -131,7 +132,7 @@ def replace_source_with_pedestrians(scenarioname,
 
     newpath = Path(pathscenario) / scenarioname
     print(newpath)
-    with open(newpath, "r") as f:
+    with open(str(newpath), "r") as f:
         datastore = json.load(f)
     f.close()
 
@@ -146,6 +147,6 @@ def replace_source_with_pedestrians(scenarioname,
     for i in range(len(xs)):
         datastore["scenario"]["topography"]["dynamicElements"] = add_pedestrian(datastore, x=xs[i], y=ys[i],
                                                                                 targets=targets)
-    with open(Path(outputdir) / newname, "w") as f:
+    with open(str(Path(outputdir) / newname), "w") as f:
         json.dump(datastore, f)
         f.close()
