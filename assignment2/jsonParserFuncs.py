@@ -2,9 +2,11 @@ import json
 from pathlib import Path
 
 
-def get_coordinates(path):
+def get_coordinates(path, full_coordinats = False):
     """
     get initial pedestrian coordinates from the file on the specified path
+    :param full_coordinats: whether to get full trajectories or just the initial position.
+           Default - just the initial position
     :param path: path to the trajectories file. With filename included.
     :return: arrays of float coordinates xs and ys.
     """
@@ -14,19 +16,33 @@ def get_coordinates(path):
         line = f.readline()
         print(line)
         timeStep = "1"
-
+        ts = list()
         xs = list()
         ys = list()
-        while line and timeStep == "1":
-            line = f.readline()
-            if line:
-                timeStep, x, y = line.split(" ")[0], line.split(" ")[2], line.split(" ")[3]
-                if timeStep == "1":
+        if not full_coordinats:
+            while line and timeStep == "1":
+                line = f.readline()
+                if line:
+                    timeStep, x, y = line.split(" ")[0], line.split(" ")[2], line.split(" ")[3]
+                    if timeStep == "1":
+                        xs.append(x)
+                        ys.append(y)
+            f.close()
+            print('*****Done.')
+        else:
+            while line:
+                line = f.readline()
+                if line:
+                    timeStep, x, y = line.split(" ")[0], line.split(" ")[2], line.split(" ")[3]
                     xs.append(x)
                     ys.append(y)
-        f.close()
-        print('*****Done.')
-    return xs, ys
+                    ts.append(timeStep)
+
+            f.close()
+        if not full_coordinats:
+            return xs, ys
+        else:
+            return xs, ys, ts
 
 
 def add_pedestrian(scenario_json,
