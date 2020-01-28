@@ -78,13 +78,15 @@ class AEwrapper:
     Class to facilitate VAE usage
     """
 
-    def __init__(self, dim_input, dim_output, trainloader, testloader):
+    def __init__(self, dim_input, dim_output, trainloader, testloader, early_stop_M = 5):
         self.dim_input = dim_input
         self.dim_output = dim_output
         self.model = AE(dim_input, dim_output)
         self.optimizer = optim.Adam(self.model.parameters(), lr=1e-3, weight_decay=0.001)
         self.trainloader = trainloader
         self.testloader = testloader
+        self.loss_vals_per_epoch = list()
+        self.early_stop_M = early_stop_M
 
     def loss_func(self, reconstructed_x, x):
         """
@@ -124,4 +126,12 @@ class AEwrapper:
                 recon_batch = self.model(data)
                 test_loss += self.loss_func(recon_batch, data).item()
         test_loss /= len(self.testloader.dataset)
+        # crude early stopping
+        self.loss_vals_per_epoch.append(test_loss)
+        if len(self.loss_vals_per_epoch) > self.early_stop_M:
+            old_loss = self.loss_vals_per_epoch[epoch-5]
+            now_loss = self.loss_vals_per_epoch[-1]
+            if now_loss/old_loss > 0.999:
+                return False
         print('====> Test set loss: {:.4f}'.format(test_loss))
+        return True

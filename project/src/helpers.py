@@ -4,6 +4,7 @@ import pandas as pd
 from gensim.models import KeyedVectors
 from pathlib import Path
 import plotly.graph_objects as go
+import plotly
 
 filepath = "../../../bigassdata/GoogleNews-vectors-negative300.bin"
 
@@ -46,11 +47,13 @@ def make_NoisySwissRoll(n_samples, n_noise):
     return data_df.to_numpy(), data_df[["0", "1", "2"]].to_numpy(), colors
 
 
-def draw_3d_plotly(data, colors=None):
+def draw_3d_plotly(data, colors=None, save = False, filename = "plotlyfig.html"):
     """
     Draw a 3d plot for given data.
     :param data: data in numpy format. Must have 3 dimensions.
     :param colors: optional, if coloring of points is wanted.
+    :param save: whether to save an html page of the plot
+    :param filename: name under which to save the file
     :return:
     """
     xdata = data[:,0]
@@ -68,4 +71,6 @@ def draw_3d_plotly(data, colors=None):
                                                 opacity=0.8))])
 
     fig.update_layout(margin=dict(l=0, r=0, b=0, t=0))
+    if save:
+        plotly.offline.plot(fig, filename=filename)
     fig.show()
